@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH -n 8       # 核
+#SBATCH -N 1        # 节点
+
+
+# 打印任务信息
+echo "Starting job $SLURM_JOB_ID at " `date`
+echo "SLURM_SUBMIT_DIR is $SLURM_SUBMIT_DIR"
+echo "Running on nodes: $SLURM_NODELIST"
+
+# 执行任务
+## 载入vasp
+module load intel
+module load VASP
+ulimit -s unlimited
+
+mpirun  vasp_gam
+
+
+# 任务结束
+echo "Job $SLURM_JOB_ID done at " `date`
