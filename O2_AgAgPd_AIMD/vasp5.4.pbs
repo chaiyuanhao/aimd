@@ -1,0 +1,31 @@
+#!/bin/sh
+#################################################################
+#PBS -N vasp5.4
+#PBS -l nodes=3:ppn=16
+#PBS -l walltime=400:00:00
+#PBS -q batch
+#PBS -V
+#PBS -S /bin/bash
+#################################################################
+
+####For Intel MPI#####
+source /public/env/bashrc
+EXEC=/public/software/vasp.5.4.4/bin/vasp_gam
+
+
+NP=`wc -l < $PBS_NODEFILE`
+
+cd ${PBS_O_WORKDIR}
+
+## 512 MB
+#export P4_GLOBMEMSIZE=536870912
+
+cat $PBS_NODEFILE > /tmp/nodefile.$$
+sed -e 's\c\ibc\g' -i /tmp/nodefile.$$
+#sort  /tmp/nodefile.$$ |uniq > /tmp/mpd.hosts
+#NN=`wc -l < /tmp/mpd.hosts`
+
+mpirun -genv I_MPI_DEVICE ssm -machinefile /tmp/nodefile.$$ -np $NP $EXEC > out
+
+#rm -rf /tmp/nodefile.$$ /tmp/mpd.hosts
+rm -rf /tmp/nodefile.$$ 
